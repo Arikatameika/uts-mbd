@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres_salwa:
+    image: postgres:15-alpine
+    container_name: postgres_SALWA
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "22134:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mbd_network
+
+  pgadmin_SALWA:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_SALWA
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "44134:80"
+    depends_on:
+      - postgres_salwa
+    networks:
+      - mbd_network
+
+volumes:
+  pgdata:
+
+networks:
+  mbd_network:
+    driver: bridge
